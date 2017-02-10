@@ -8,6 +8,8 @@ namespace IpCameraClient.Db
         public DbSet<Record> Records { get; set; }
         public DbSet<Camera> Cameras { get; set; }
 
+        public SQLiteContext() => Database.EnsureCreated();
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite("Filename=./CameraRecords.db");

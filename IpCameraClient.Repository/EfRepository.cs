@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using IpCameraClient.Abstractions;
 using System.Collections.Generic;
+using System;
+using System.Linq.Expressions;
 
 namespace IpCameraClient.Repository
 {
@@ -8,6 +10,14 @@ namespace IpCameraClient.Repository
     {
         DbContext _context;
         DbSet<TEntity> _dbSet;
+        Expression<Func<TEntity, object>> _includes;
+
+        public EfRepository(DbContext context, Expression<Func<TEntity, object>> includes)
+        {
+            _context = context;
+            _dbSet = _context.Set<TEntity>();
+            _includes = includes;
+        }
 
         public EfRepository(DbContext context)
         {
@@ -15,7 +25,13 @@ namespace IpCameraClient.Repository
             _dbSet = _context.Set<TEntity>();
         }
 
-        public IEnumerable<TEntity> Entities => _dbSet;
+        public IEnumerable<TEntity> GetAll()
+        {
+            if (_includes != null)
+                return _dbSet.Include(_includes);
+            else
+                return _dbSet;
+        }
 
         public void Add(TEntity entity)
         {
