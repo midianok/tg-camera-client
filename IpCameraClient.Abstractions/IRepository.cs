@@ -2,11 +2,11 @@
 
 namespace IpCameraClient.Abstractions
 {
-    public interface IRepository<T>
+    public interface IRepository<TEntity> where TEntity : class
     {
-        IEnumerable<T> Entities { get;}
-        void Add(T entity);
-        void Update(T entity);
-        void Delete(T entity);
+        IEnumerable<TEntity> Entities { get;}
+        void Add(TEntity entity);
+        void Update(TEntity entity);
+        void Delete(TEntity entity);
     }
 }
