@@ -3,6 +3,7 @@ using IpCameraClient.Abstractions;
 using System.Collections.Generic;
 using System;
 using System.Linq.Expressions;
+using IpCameraClient.Db;
 
 namespace IpCameraClient.Repository
 {
@@ -12,12 +13,7 @@ namespace IpCameraClient.Repository
         DbSet<TEntity> _dbSet;
         Expression<Func<TEntity, object>> _includes;
 
-        public EfRepository(DbContext context, Expression<Func<TEntity, object>> includes)
-        {
-            _context = context;
-            _dbSet = _context.Set<TEntity>();
-            _includes = includes;
-        }
+        public Expression<Func<TEntity, object>> Include { get; set; }
 
         public EfRepository(DbContext context)
         {

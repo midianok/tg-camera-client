@@ -1,9 +1,9 @@
-﻿using System;
-using IpCameraClient.Abstractions;
-using IpCameraClient.Db;
+﻿using IpCameraClient.Db;
 using IpCameraClient.Model;
 using IpCameraClient.Repository;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace IpCamera.Console
@@ -12,7 +12,7 @@ namespace IpCamera.Console
     {
         static void Main(string[] args)
         {
-            //For tests
+            System.Console.WriteLine(Directory.GetCurrentDirectory());
         }
     }
 }

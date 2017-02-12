@@ -1,5 +1,6 @@
 ﻿using IpCameraClient.Model;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace IpCameraClient.Db
 {
@@ -8,11 +9,23 @@ namespace IpCameraClient.Db
         public DbSet<Record> Records { get; set; }
         public DbSet<Camera> Cameras { get; set; }
 
-        public SQLiteContext() => Database.EnsureCreated();
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public SQLiteContext() : base()
         {
-            optionsBuilder.UseSqlite("Filename=./CameraRecords.db");
+            if (Database.EnsureCreated())
+            {
+                Seed();
+            }
+                
         }
+
+        private void Seed()
+        {
+  
+            SaveChanges();
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
+            optionsBuilder.UseSqlite($"Filename=CameraClient.db");
+        
     }
 }
