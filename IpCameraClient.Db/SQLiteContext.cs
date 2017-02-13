@@ -1,6 +1,6 @@
 ﻿using IpCameraClient.Model;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+using System;
 
 namespace IpCameraClient.Db
 {
@@ -11,17 +11,17 @@ namespace IpCameraClient.Db
 
         public SQLiteContext() : base()
         {
-            if (Database.EnsureCreated())
-            {
-                Seed();
-            }
-                
+            Records.Include(x => x.Camera);
+            Cameras.Include(x => x.Records);
         }
 
-        private void Seed()
+        public void Seed(Action<SQLiteContext> seedAction)
         {
-  
-            SaveChanges();
+            if (Database.EnsureCreated())
+            {
+                seedAction(this);
+                SaveChanges();
+            }
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>

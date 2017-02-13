@@ -15,7 +15,7 @@ namespace IpCameraClient.WebFacade.Controllers
         private readonly IRepository<Camera> _cameras;
         private readonly IRepository<Record> _records;
 
-        public TelegramBotController(IOptions<AppSettings> optionsAccessor, IRepository<Camera> cameras, IRepository<Record> records)
+        public TelegramBotController(IRepository<Camera> cameras, IRepository<Record> records)
         {
             _cameras = cameras;
             _records = records;
@@ -30,7 +30,7 @@ namespace IpCameraClient.WebFacade.Controllers
 
             using(var file = System.IO.File.Open($"./CameraImages/{record.ContentLocation}", System.IO.FileMode.Open))
             {
-                await Program.Bot.client.SendPhotoAsync(update.Message.Chat.Id, new FileToSend("Photo.jpg",file));
+                await Bot.Api.SendPhotoAsync(update.Message.Chat.Id, new FileToSend("Photo.jpg",file));
             }
 
             return Ok();

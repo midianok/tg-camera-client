@@ -2,6 +2,7 @@
 using IpCameraClient.Model;
 using IpCameraClient.Repository;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +13,13 @@ namespace IpCamera.Console
     {
         static void Main(string[] args)
         {
-            System.Console.WriteLine(Directory.GetCurrentDirectory());
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.Development.json", optional: true)
+                .AddEnvironmentVariables(); ;
+            var Configuration = builder.Build();
+
         }
     }
 }

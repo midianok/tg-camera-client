@@ -11,9 +11,6 @@ namespace IpCameraClient.Repository
     {
         DbContext _context;
         DbSet<TEntity> _dbSet;
-        Expression<Func<TEntity, object>> _includes;
-
-        public Expression<Func<TEntity, object>> Include { get; set; }
 
         public EfRepository(DbContext context)
         {
@@ -21,13 +18,8 @@ namespace IpCameraClient.Repository
             _dbSet = _context.Set<TEntity>();
         }
 
-        public IEnumerable<TEntity> GetAll()
-        {
-            if (_includes != null)
-                return _dbSet.Include(_includes);
-            else
-                return _dbSet;
-        }
+        public IEnumerable<TEntity> GetAll() => _dbSet;
+        
 
         public void Add(TEntity entity)
         {

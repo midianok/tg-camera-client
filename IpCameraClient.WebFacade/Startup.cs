@@ -9,11 +9,14 @@ using Microsoft.EntityFrameworkCore;
 using IpCameraClient.Abstractions;
 using IpCameraClient.Model;
 using IpCameraClient.Repository;
+using System.IO;
 
 namespace IpCameraClient.WebFacade
 {
     public class Startup
     {
+        private const string DB_NAME = "CameraClient.db";
+
         public IConfigurationRoot Configuration { get; }
 
         public Startup(IHostingEnvironment env)
@@ -28,22 +31,35 @@ namespace IpCameraClient.WebFacade
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddOptions();
-            
+            var settings = Configuration.Get<Settings>();
 
             services.AddDbContext<SQLiteContext>(options =>
             {
-                options.UseSqlite($"Filename=CameraClient.db");
+                options.UseSqlite($"Filename={DB_NAME}");
                 
             });
+
+            var context = new SQLiteContext();
+            context.Seed(x =>
+            {
+                x.Cameras.Add(new Camera
+                {
+                    Auth = settings.DefaultCameraAuth,
+                    CameraUrl = settings.DefaultCameraUrl,
+                    Model = settings.DefaultCameraModelName
+                });
+            });
+            
+            services
+                .AddMvc()
+                .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+
+            Bot.Init(settings.TelegramBotToken);
+            Bot.Api.SetWebhookAsync(settings.HostUrl).Wait();
 
             services.AddScoped<DbContext, SQLiteContext>();
             services.AddScoped<IRepository<Camera>, EfRepository<Camera>>();
             services.AddScoped<IRepository<Record>, EfRepository<Record>>(); 
-            
-            services
-                .AddMvc()
-                .AddJsonOptions( options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore );
         }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
@@ -52,5 +68,14 @@ namespace IpCameraClient.WebFacade
 
             app.UseMvc();
         }
+    }
+
+    public class Settings
+    {
+        public string TelegramBotToken { get; set; }
+        public string HostUrl { get; set; }
+        public string DefaultCameraModelName { get; set; }
+        public string DefaultCameraUrl { get; set; }
+        public string DefaultCameraAuth { get; set; }
     }
 }
