@@ -8,6 +8,7 @@ namespace IpCameraClient.Db
     {
         public DbSet<Record> Records { get; set; }
         public DbSet<Camera> Cameras { get; set; }
+        public DbSet<TelegramUser> TelegramUser { get; set; }
 
         public SQLiteContext() : base()
         {

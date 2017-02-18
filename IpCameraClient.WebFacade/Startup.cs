@@ -10,6 +10,7 @@ using IpCameraClient.Abstractions;
 using IpCameraClient.Model;
 using IpCameraClient.Repository;
 using System.IO;
+using System.Linq;
 
 namespace IpCameraClient.WebFacade
 {
@@ -31,7 +32,13 @@ namespace IpCameraClient.WebFacade
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddOptions();
+            services.Configure<Settings>(Configuration);
+
             var settings = Configuration.Get<Settings>();
+
+            if (!Directory.Exists(settings.ContentFolderName))
+                Directory.CreateDirectory(settings.ContentFolderName);
 
             services.AddDbContext<SQLiteContext>(options =>
             {
@@ -48,6 +55,13 @@ namespace IpCameraClient.WebFacade
                     CameraUrl = settings.DefaultCameraUrl,
                     Model = settings.DefaultCameraModelName
                 });
+
+                var accessedTelegramUserNames = settings.TelegramUsersAccess
+                    .Split(';')
+                    .Select(z => new TelegramUser {TelegramUserName = z });
+
+                x.TelegramUser.AddRange(accessedTelegramUserNames);
+
             });
             
             services
@@ -59,13 +73,16 @@ namespace IpCameraClient.WebFacade
 
             services.AddScoped<DbContext, SQLiteContext>();
             services.AddScoped<IRepository<Camera>, EfRepository<Camera>>();
-            services.AddScoped<IRepository<Record>, EfRepository<Record>>(); 
+            services.AddScoped<IRepository<Record>, EfRepository<Record>>();
+            services.AddScoped<IRepository<TelegramUser>, EfRepository<TelegramUser>>();
+            services.AddScoped<IDataProvider, FileSystemDataProvider>();
         }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-
             app.UseMvc();
         }
     }
@@ -73,9 +90,11 @@ namespace IpCameraClient.WebFacade
     public class Settings
     {
         public string TelegramBotToken { get; set; }
+        public string TelegramUsersAccess { get; set; }
         public string HostUrl { get; set; }
         public string DefaultCameraModelName { get; set; }
         public string DefaultCameraUrl { get; set; }
         public string DefaultCameraAuth { get; set; }
+        public string ContentFolderName { get; set; }
     }
 }

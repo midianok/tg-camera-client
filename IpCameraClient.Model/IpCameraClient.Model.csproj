@@ -8,4 +8,8 @@
     <PackageReference Include="ImageSharp" Version="1.0.0-alpha2-00052" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\IpCameraClient.Abstractions\IpCameraClient.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>

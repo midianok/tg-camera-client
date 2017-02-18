@@ -9,8 +9,8 @@ namespace IpCameraClient.WebFacade
         public static void Main(string[] args)
         {
             var host = new WebHostBuilder()
+                .UseIISIntegration()
                 .UseKestrel()
-                .UseUrls("http://*:5050")
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup>()
                 .Build();

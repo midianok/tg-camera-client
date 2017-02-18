@@ -1,5 +1,5 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IpCameraClient.Model
 {
@@ -11,9 +11,12 @@ namespace IpCameraClient.Model
 
         public ContentType ContentType { get; set; }
 
-        public string ContentLocation { get; set; }
+        public string ContentName { get; set; }
 
         public virtual Camera Camera { get; set; }
+
+        [NotMapped]
+        public byte[] Content { get; set; }
     }
 
     public enum ContentType
