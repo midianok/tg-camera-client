@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ImageMagick;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -22,22 +24,54 @@ namespace IpCameraClient.Model
 
         public async Task<Record> GetPhotoAsync()
         {
+            return new Record
+            {
+                Camera = this,
+                ContentName = $"{Model}_{DateTime.Now.ToString("ddMMyyyy-H-mm-ss")}.jpg",
+                ContentType = ContentType.IMAGE,
+                DateTime = DateTime.Now,
+                Content = await GetImageFromCamera()
+            };
+        }
+
+        public async Task<Record> GetGifAsync()
+        {
+            byte[] content;
+            using (var images = new MagickImageCollection())
+            {
+                for (int i = 0; i < 15; i++)
+                {
+                    images.Add(new MagickImage( await GetImageFromCamera()));
+                    images[i].AnimationDelay = 25;
+                }
+
+                images.Write("temp.gif");
+                content = File.ReadAllBytes("temp.gif");
+                File.Delete("temp.gif");
+            }
+            
+            return new Record
+            {
+                Camera = this,
+                ContentName = $"{Model}_{DateTime.Now.ToString("ddMMyyyy-H-mm-ss")}.gif",
+                ContentType = ContentType.GIF,
+                DateTime = DateTime.Now,
+                Content = content
+            };
+        }
+
+        private async Task<byte[]> GetImageFromCamera()
+        {
             byte[] photo;
+
             using (var httpClient = new HttpClient())
             {
                 var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(Auth));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                photo = await httpClient.GetByteArrayAsync(CameraUrl);
+                photo = await httpClient.GetByteArrayAsync("http://lorempixel.com/400/200/");
             };
 
-            return new Record
-            {
-                Camera = this,
-                ContentName = $"{Model}_{DateTime.Now.ToString("ddMMyyyy-H-mm")}.jpg",
-                ContentType = ContentType.IMAGE,
-                DateTime = DateTime.Now,
-                Content = photo
-            };
+            return photo;
         }
 
     }

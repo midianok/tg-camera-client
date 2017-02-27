@@ -69,7 +69,7 @@ namespace IpCameraClient.WebFacade
                 .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
             Bot.Init(settings.TelegramBotToken);
-            Bot.Api.SetWebhookAsync(settings.HostUrl).Wait();
+            Bot.Api.SetWebhookAsync(settings.HostUrl + "/api/TelegramBot").Wait();
 
             services.AddScoped<DbContext, SQLiteContext>();
             services.AddScoped<IRepository<Camera>, EfRepository<Camera>>();

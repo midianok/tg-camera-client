@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ImageSharp" Version="1.0.0-alpha2-00052" />
+    <PackageReference Include="Magick.NET.Core-Q8" Version="7.0.4.701" />
+    <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
+    <PackageReference Include="Telegram.Bot" Version="10.4.0" />
   </ItemGroup>
 
   <ItemGroup>

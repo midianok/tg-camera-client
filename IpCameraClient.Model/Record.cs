@@ -25,6 +25,8 @@ namespace IpCameraClient.Model
 
         VIDEO,
 
-        AUDIO
+        AUDIO,
+
+        GIF
     }
 }
