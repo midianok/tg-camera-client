@@ -11,14 +11,13 @@ using SysFile = System.IO.File;
 using System.IO;
 using System;
 using Telegram.Bot.Types.Enums;
+using IpCameraClient.WebFacade.Filters;
 
 namespace IpCameraClient.WebFacade.Controllers
 {
     [Route("api/[controller]")]
     public class TelegramBotController : Controller
     {
-        private const string GET_PHOTO_COMMAND = "Photo";
-        private const string GET_GIF_COMMAND = "Gif";
         private const string START_COMMAND = "/start";
 
         private readonly IRepository<Camera> _cameras;
@@ -43,6 +42,7 @@ namespace IpCameraClient.WebFacade.Controllers
         }
 
         [HttpPost]
+        [IpWhitelist("149.154.167.197", "149.154.167.233")]
         public async Task<IActionResult> Post([FromBody]Update update)
         {
             var accessedUserNames = _users.Entities.Select(x => x.TelegramUserName);
@@ -54,13 +54,10 @@ namespace IpCameraClient.WebFacade.Controllers
                 case START_COMMAND:
                     await ShowCamerasKeyboardAsync(update);
                     break;
-                case string replyStr when replyStr.Contains(Emoji.Camera):
-                    await ShowCameraControlKeyboardAsync(update);
-                    break;
-                case GET_PHOTO_COMMAND:
+                case string btnTxt when btnTxt.Contains(Emoji.Photo):
                     await SendPhotoAsync(update);
                     break;
-                case GET_GIF_COMMAND:
+                case string btnTxt when btnTxt.Contains(Emoji.Gif):
                     await SendGifAsync(update);
                     break;
                 default:
@@ -72,7 +69,7 @@ namespace IpCameraClient.WebFacade.Controllers
 
         private async Task SendGifAsync(Update update)
         {
-            var cameraId = int.Parse(update.Message.Text.Split(' ')[1]);
+            var cameraId = int.Parse(update.Message.Text.Split(' ')[2]);
             var camera = _cameras.Entities.Single(x => x.CameraId == cameraId);
 
             var record = await camera.GetGifAsync();
@@ -90,7 +87,7 @@ namespace IpCameraClient.WebFacade.Controllers
 
         private async Task SendPhotoAsync(Update update)
         {
-            var cameraId = int.Parse(update.Message.Text.Split(' ')[1]);
+            var cameraId = int.Parse(update.Message.Text.Split(' ')[2]);
             var camera = _cameras.Entities.Single(x => x.CameraId == cameraId);
 
             var record = await camera.GetPhotoAsync();
@@ -110,19 +107,13 @@ namespace IpCameraClient.WebFacade.Controllers
         {
             var cameraListKM = new TelegramKeyboardMarkup();
             foreach (var camera in _cameras.Entities)
-                cameraListKM.Keyboard.Add(new List<TelegramKeyboardButton> { new TelegramKeyboardButton { Text = $"{Emoji.Camera} {camera.CameraId} {camera.Model}" } });
+                cameraListKM.Keyboard.Add(new List<TelegramKeyboardButton>
+                {
+                    new TelegramKeyboardButton { Text = $"{Emoji.Photo} {camera.Model} {camera.CameraId}" },
+                    new TelegramKeyboardButton { Text = $"{Emoji.Gif} {camera.Model} {camera.CameraId}" },
+                });
 
-            return Bot.Api.SendTextMessageAsync(update.Message.Chat.Id, "Choose Camera", replyMarkup: cameraListKM);
-        }
-
-        private Task ShowCameraControlKeyboardAsync(Update update)
-        {
-            var cameraActions = new TelegramKeyboardMarkup();
-            cameraActions.Keyboard.Add(new List<TelegramKeyboardButton> {
-                new TelegramKeyboardButton { Text = $"Photo" },
-                new TelegramKeyboardButton { Text = $"Gif" }
-            });
-            return Bot.Api.SendTextMessageAsync(update.Message.Chat.Id, "What to do", replyMarkup: cameraActions);
+            return Bot.Api.SendTextMessageAsync(update.Message.Chat.Id, Emoji.Camera, replyMarkup: cameraListKM);
         }
     }
 

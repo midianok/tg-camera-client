@@ -5,6 +5,7 @@ using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace IpCameraClient.Model
@@ -39,12 +40,12 @@ namespace IpCameraClient.Model
             byte[] content;
             using (var images = new MagickImageCollection())
             {
-                for (int i = 0; i < 15; i++)
+                for (int i = 0; i < 25; i++)
                 {
                     images.Add(new MagickImage( await GetImageFromCamera()));
-                    images[i].AnimationDelay = 25;
+                    images[i].AnimationDelay = 15;
                 }
-
+                images.OptimizePlus();
                 images.Write("temp.gif");
                 content = File.ReadAllBytes("temp.gif");
                 File.Delete("temp.gif");
@@ -68,7 +69,7 @@ namespace IpCameraClient.Model
             {
                 var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(Auth));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                photo = await httpClient.GetByteArrayAsync("http://lorempixel.com/400/200/");
+                photo = await httpClient.GetByteArrayAsync(CameraUrl);
             };
 
             return photo;

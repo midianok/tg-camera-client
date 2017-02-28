@@ -262,5 +262,5 @@ __pycache__/
 *.pyc
 
 appsettings.Development.json
-CameraImages/
+Content/
 /IpCameraClient.WebFacade/Content

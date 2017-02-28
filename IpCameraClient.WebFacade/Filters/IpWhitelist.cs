@@ -8,8 +8,6 @@ namespace IpCameraClient.WebFacade.Filters
 {
     public class IpWhitelistAttribute : ActionFilterAttribute
     {
-        private readonly IEnumerable<IPAddress> _ipWhiteList;
-
         private readonly IPAddress _ipFrom;
         private readonly IPAddress _ipTo;
 
