@@ -31,7 +31,7 @@ namespace IpCameraClient.Model
                 ContentName = $"{Model}_{DateTime.Now.ToString("ddMMyyyy-H-mm-ss")}.jpg",
                 ContentType = ContentType.IMAGE,
                 DateTime = DateTime.Now,
-                Content = await GetImageFromCamera()
+                Content = await GetPhotoFromCamera()
             };
         }
 
@@ -40,11 +40,11 @@ namespace IpCameraClient.Model
             byte[] content;
             using (var images = new MagickImageCollection())
             {
-                for (int i = 0; i < 25; i++)
-                {
-                    images.Add(new MagickImage( await GetImageFromCamera()));
-                    images[i].AnimationDelay = 15;
-                }
+                var photos = await GetPhotoFromCamera(25);
+
+                foreach (var photo in photos)
+                    images.Add(new MagickImage(photo));
+
                 images.OptimizePlus();
                 content = images.ToByteArray(MagickFormat.Gif);
             }
@@ -59,7 +59,7 @@ namespace IpCameraClient.Model
             };
         }
 
-        private async Task<byte[]> GetImageFromCamera()
+        private async Task<byte[]> GetPhotoFromCamera()
         {
             byte[] photo;
 
@@ -71,6 +71,24 @@ namespace IpCameraClient.Model
             };
 
             return photo;
+        }
+
+        private async Task<List<byte[]>> GetPhotoFromCamera(int imagesCount)
+        {
+            var images = new List<byte[]>();
+
+            using (var httpClient = new HttpClient())
+            {
+                for (int i = 0; i < imagesCount; i++)
+                {
+                    var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(Auth));
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    var image = await httpClient.GetByteArrayAsync(CameraUrl);
+                    images.Add(image);
+                }
+            };
+
+            return images;
         }
 
     }
