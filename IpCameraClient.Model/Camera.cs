@@ -46,9 +46,7 @@ namespace IpCameraClient.Model
                     images[i].AnimationDelay = 15;
                 }
                 images.OptimizePlus();
-                images.Write("temp.gif");
-                content = File.ReadAllBytes("temp.gif");
-                File.Delete("temp.gif");
+                content = images.ToByteArray(MagickFormat.Gif);
             }
             
             return new Record
