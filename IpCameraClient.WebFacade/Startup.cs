@@ -11,6 +11,7 @@ using IpCameraClient.Model;
 using IpCameraClient.Repository;
 using System.IO;
 using System.Linq;
+using NLog.Extensions.Logging;
 
 namespace IpCameraClient.WebFacade
 {
@@ -79,10 +80,15 @@ namespace IpCameraClient.WebFacade
         }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+
             if (env.IsDevelopment())
             {
-                loggerFactory.AddConsole(LogLevel.Debug);
+                loggerFactory.AddConsole(LogLevel.Information);
                 loggerFactory.AddDebug();
+            }
+            else
+            {
+                loggerFactory.AddNLog();
             }
 
             app.UseMvc(routes => 

@@ -20,8 +20,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="1.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="1.1.0" />
+    <PackageReference Include="NLog" Version="5.0.0-beta06" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0-rtm-beta3" />
     <PackageReference Include="Telegram.Bot" Version="10.4.0" />
   </ItemGroup>
   <ItemGroup>
@@ -32,6 +33,11 @@
     <ProjectReference Include="..\IpCameraClient.Db\IpCameraClient.Db.csproj" />
     <ProjectReference Include="..\IpCameraClient.Model\IpCameraClient.Model.csproj" />
     <ProjectReference Include="..\IpCameraClient.Repository\IpCameraClient.Repository.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
