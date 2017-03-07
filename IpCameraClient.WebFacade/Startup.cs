@@ -69,7 +69,7 @@ namespace IpCameraClient.WebFacade
                 .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
             Bot.Init(settings.TelegramBotToken);
-            Bot.Api.SetWebhookAsync(settings.HostUrl + "/api/TelegramBot").Wait();
+            Bot.Api.SetWebhookAsync(settings.HostUrl + "/TelegramBot/Message").Wait();
 
             services.AddScoped<DbContext, SQLiteContext>();
             services.AddScoped<IRepository<Camera>, EfRepository<Camera>>();
@@ -79,11 +79,18 @@ namespace IpCameraClient.WebFacade
         }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            if (env.IsDevelopment())
+            {
+                loggerFactory.AddConsole(LogLevel.Debug);
+                loggerFactory.AddDebug();
+            }
 
-
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-            app.UseMvc();
+            app.UseMvc(routes => 
+            {
+                routes.MapRoute(
+                    name: "DefaultRoute",
+                    template: "{controller}/{action}/{id?}");
+            });
         }
     }
 

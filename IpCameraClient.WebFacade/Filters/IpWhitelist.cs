@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
@@ -19,9 +18,16 @@ namespace IpCameraClient.WebFacade.Filters
             
         public override void OnActionExecuting(ActionExecutingContext context)
         {
+            var addressBytes = context.HttpContext.Connection.RemoteIpAddress.GetAddressBytes();
+            var localIpV4 = IPAddress.Parse("127.0.0.1").GetAddressBytes();
+            var localIpV6 = IPAddress.Parse("::1").GetAddressBytes();
+
+            if (addressBytes.SequenceEqual(localIpV4) || addressBytes.SequenceEqual(localIpV6))
+                return;
+
             var lowerBytes = _ipFrom.GetAddressBytes();
             var upperBytes = _ipTo.GetAddressBytes();
-            var addressBytes = context.HttpContext.Connection.RemoteIpAddress.GetAddressBytes();
+            
 
             bool lowerBoundary = true, upperBoundary = true;
             for (int i = 0; i < lowerBytes.Length && (lowerBoundary || upperBoundary); i++)

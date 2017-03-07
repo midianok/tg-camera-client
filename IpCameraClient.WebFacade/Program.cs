@@ -11,7 +11,6 @@ namespace IpCameraClient.WebFacade
             var host = new WebHostBuilder()
                 .UseIISIntegration()
                 .UseKestrel()
-                .UseUrls("http://localhost:5000")
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup>()
                 .Build();
