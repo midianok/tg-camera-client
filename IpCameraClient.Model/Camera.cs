@@ -28,7 +28,7 @@ namespace IpCameraClient.Model
             return new Record
             {
                 Camera = this,
-                ContentName = $"{Model}_{DateTime.Now.ToString("ddMMyyyy-H-mm-ss")}.jpg",
+                ContentName = $"{Model}_{DateTime.Now:ddMMyyyy-H-mm-ss}.jpg",
                 ContentType = ContentType.IMAGE,
                 DateTime = DateTime.Now,
                 Content = await GetPhotoFromCamera()
@@ -52,7 +52,7 @@ namespace IpCameraClient.Model
             return new Record
             {
                 Camera = this,
-                ContentName = $"{Model}_{DateTime.Now.ToString("ddMMyyyy-H-mm-ss")}.gif",
+                ContentName = $"{Model}_{DateTime.Now:ddMMyyyy-H-mm-ss}.gif",
                 ContentType = ContentType.GIF,
                 DateTime = DateTime.Now,
                 Content = content
@@ -79,7 +79,7 @@ namespace IpCameraClient.Model
 
             using (var httpClient = new HttpClient())
             {
-                for (int i = 0; i < imagesCount; i++)
+                for (var i = 0; i < imagesCount; i++)
                 {
                     var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(Auth));
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);

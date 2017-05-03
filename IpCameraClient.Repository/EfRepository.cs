@@ -6,16 +6,10 @@ namespace IpCameraClient.Repository
 {
     public class EfRepository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        DbContext _context;
-        DbSet<TEntity> _dbSet;
+        private readonly DbContext _context;
+        private readonly DbSet<TEntity> _dbSet;
 
-        public IEnumerable<TEntity> Entities
-        {
-            get
-            {
-                return _dbSet;
-            }
-        }
+        public IEnumerable<TEntity> Entities => _dbSet;
 
         public EfRepository(DbContext context)
         {
