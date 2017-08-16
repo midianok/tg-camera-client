@@ -5,13 +5,11 @@ VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpCameraClient.WebFacade", "IpCameraClient.WebFacade\IpCameraClient.WebFacade.csproj", "{65D3592E-CCB1-4A5C-A919-1E4A0DF6D2C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpCameraClient.Abstractions", "IpCameraClient.Abstractions\IpCameraClient.Abstractions.csproj", "{B52B80F7-0BCB-4D7B-B193-C4C42BC4DE32}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpCameraClient.Db", "IpCameraClient.Db\IpCameraClient.Db.csproj", "{55F1F24C-82D2-4ED0-8A1C-7E50D292C456}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpCameraClient.Model", "IpCameraClient.Model\IpCameraClient.Model.csproj", "{CDC77080-1B76-48A0-891B-B97A1E3CDDCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpCameraClient.Repository", "IpCameraClient.Repository\IpCameraClient.Repository.csproj", "{CA030D18-46FF-4425-8F84-41397A9C5BD2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpCameraClient.Infrastructure", "IpCameraClient.Infrastructure\IpCameraClient.Infrastructure.csproj", "{CA030D18-46FF-4425-8F84-41397A9C5BD2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,18 +33,6 @@ Global
 		{65D3592E-CCB1-4A5C-A919-1E4A0DF6D2C6}.Release|x64.Build.0 = Release|Any CPU
 		{65D3592E-CCB1-4A5C-A919-1E4A0DF6D2C6}.Release|x86.ActiveCfg = Release|Any CPU
 		{65D3592E-CCB1-4A5C-A919-1E4A0DF6D2C6}.Release|x86.Build.0 = Release|Any CPU
-		{B52B80F7-0BCB-4D7B-B193-C4C42BC4DE32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B52B80F7-0BCB-4D7B-B193-C4C42BC4DE32}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B52B80F7-0BCB-4D7B-B193-C4C42BC4DE32}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B52B80F7-0BCB-4D7B-B193-C4C42BC4DE32}.Debug|x64.Build.0 = Debug|Any CPU
-		{B52B80F7-0BCB-4D7B-B193-C4C42BC4DE32}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B52B80F7-0BCB-4D7B-B193-C4C42BC4DE32}.Debug|x86.Build.0 = Debug|Any CPU
-		{B52B80F7-0BCB-4D7B-B193-C4C42BC4DE32}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B52B80F7-0BCB-4D7B-B193-C4C42BC4DE32}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B52B80F7-0BCB-4D7B-B193-C4C42BC4DE32}.Release|x64.ActiveCfg = Release|Any CPU
-		{B52B80F7-0BCB-4D7B-B193-C4C42BC4DE32}.Release|x64.Build.0 = Release|Any CPU
-		{B52B80F7-0BCB-4D7B-B193-C4C42BC4DE32}.Release|x86.ActiveCfg = Release|Any CPU
-		{B52B80F7-0BCB-4D7B-B193-C4C42BC4DE32}.Release|x86.Build.0 = Release|Any CPU
 		{55F1F24C-82D2-4ED0-8A1C-7E50D292C456}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{55F1F24C-82D2-4ED0-8A1C-7E50D292C456}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55F1F24C-82D2-4ED0-8A1C-7E50D292C456}.Debug|x64.ActiveCfg = Debug|Any CPU

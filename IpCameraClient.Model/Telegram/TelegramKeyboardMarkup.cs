@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace IpCameraClient.Model
+namespace IpCameraClient.Model.Telegram
 {
     [DataContract]
     public class TelegramKeyboardMarkup : IReplyMarkup

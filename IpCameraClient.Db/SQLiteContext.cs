@@ -1,6 +1,7 @@
 ﻿using IpCameraClient.Model;
 using Microsoft.EntityFrameworkCore;
 using System;
+using IpCameraClient.Model.Telegram;
 
 namespace IpCameraClient.Db
 {
@@ -18,11 +19,9 @@ namespace IpCameraClient.Db
 
         public void Seed(Action<SQLiteContext> seedAction)
         {
-            if (Database.EnsureCreated())
-            {
-                seedAction(this);
-                SaveChanges();
-            }
+            if (!Database.EnsureCreated()) return;
+            seedAction(this);
+            SaveChanges();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>

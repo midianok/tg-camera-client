@@ -6,18 +6,20 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
-using IpCameraClient.Abstractions;
 using IpCameraClient.Model;
-using IpCameraClient.Repository;
 using System.IO;
 using System.Linq;
+using IpCameraClient.Infrastructure.Abstractions;
+using IpCameraClient.Infrastructure.Repository;
+using IpCameraClient.Infrastructure.Services;
+using IpCameraClient.Model.Telegram;
 using NLog.Extensions.Logging;
 
 namespace IpCameraClient.WebFacade
 {
     public class Startup
     {
-        private const string DB_NAME = "CameraClient.db";
+        private const string DbName = "CameraClient.db";
 
         public IConfigurationRoot Configuration { get; }
 
@@ -43,7 +45,7 @@ namespace IpCameraClient.WebFacade
 
             services.AddDbContext<SQLiteContext>(options =>
             {
-                options.UseSqlite($"Filename={DB_NAME}");
+                options.UseSqlite($"Filename={DbName}");
                 
             });
 
@@ -76,7 +78,7 @@ namespace IpCameraClient.WebFacade
             services.AddScoped<IRepository<Camera>, EfRepository<Camera>>();
             services.AddScoped<IRepository<Record>, EfRepository<Record>>();
             services.AddScoped<IRepository<TelegramUser>, EfRepository<TelegramUser>>();
-            services.AddScoped<IDataProvider, FileSystemDataProvider>();
+            services.AddScoped<IRecordSaverService, FileSystemRecordSaverService>();
         }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {

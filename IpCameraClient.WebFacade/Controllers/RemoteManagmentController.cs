@@ -1,9 +1,10 @@
-using IpCameraClient.Abstractions;
 using IpCameraClient.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System.Linq;
 using System.Threading.Tasks;
+using IpCameraClient.Infrastructure.Abstractions;
+using IpCameraClient.Infrastructure.Services;
+using IpCameraClient.Model.Telegram;
 
 namespace IpCameraClient.WebFacade.Controllers
 {
@@ -11,32 +12,33 @@ namespace IpCameraClient.WebFacade.Controllers
     {
         private readonly IRepository<Camera> _cameras;
         private readonly IRepository<Record> _records;
-        private readonly IDataProvider _dataProvider;
+        private readonly IRecordSaverService _recordSaverService;
+        private readonly IGetRecordService _getRecordService;
         private readonly Settings _settings;
-        public string _ipWhiteList { get; set; }
 
         public RemoteManagmentController(
             IRepository<Camera> cameras,
             IRepository<Record> records,
             IRepository<TelegramUser> users,
-            IDataProvider dataProvider,
+            IRecordSaverService recordSaverService,
             IOptions<Settings> settings)
         {
             _cameras = cameras;
             _records = records;
-            _dataProvider = dataProvider;
+            _getRecordService = new GetRecordService();
+            _recordSaverService = recordSaverService;
             _settings = settings.Value;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetPhoto(int id)
         {
-            var record = await _cameras.Entities
-                .Single(x => x.CameraId == id)
-                .GetPhotoAsync();
+            var camera = _cameras.GetById(id);
+            var record = _getRecordService.GetPhoto(camera);
 
             _records.Add(record);
-            _dataProvider.WriteData($"{_settings.ContentFolderName}/{record.ContentName}", record.Content);
+            _records.SaveChanges();
+            _recordSaverService.WriteData($"{_settings.ContentFolderName}/{record.ContentName}", record.Content);
 
             return Ok();
         }

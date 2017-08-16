@@ -5,7 +5,7 @@ namespace IpCameraClient.Model
 {
     public class Record
     {
-        public int RecordId { get; private set; }
+        public int RecordId { get; set; }
 
         public DateTime DateTime { get; set; }
 
@@ -21,12 +21,12 @@ namespace IpCameraClient.Model
 
     public enum ContentType
     {
-        IMAGE,
+        Image,
 
-        VIDEO,
+        Video,
 
-        AUDIO,
+        Audio,
 
-        GIF
+        Gif
     }
 }
