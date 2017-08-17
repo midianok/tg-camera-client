@@ -11,7 +11,7 @@ namespace IpCameraClient.Db
         public DbSet<Camera> Cameras { get; set; }
         public DbSet<TelegramUser> TelegramUser { get; set; }
 
-        public SQLiteContext() : base()
+        public SQLiteContext(DbContextOptions<SQLiteContext> options) : base(options)
         {
             Records.Include(x => x.Camera);
             Cameras.Include(x => x.Records);

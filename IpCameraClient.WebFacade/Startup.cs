@@ -48,8 +48,8 @@ namespace IpCameraClient.WebFacade
                 options.UseSqlite($"Filename={DbName}");
                 
             });
-
-            var context = new SQLiteContext();
+            var optionsBuilder = new DbContextOptionsBuilder<SQLiteContext>();
+            var context = new SQLiteContext(optionsBuilder.Options);
             context.Seed(x =>
             {
                 x.Cameras.Add(new Camera
