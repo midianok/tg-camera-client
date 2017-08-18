@@ -13,7 +13,7 @@ using IpCameraClient.Infrastructure.Abstractions;
 using IpCameraClient.Infrastructure.Repository;
 using IpCameraClient.Infrastructure.Services;
 using IpCameraClient.Model.Telegram;
-using NLog.Extensions.Logging;
+using Serilog;
 
 namespace IpCameraClient.WebFacade
 {
@@ -31,15 +31,16 @@ namespace IpCameraClient.WebFacade
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables(); ;
             Configuration = builder.Build();
+
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
             services.Configure<Settings>(Configuration);
+            services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 
             var settings = Configuration.Get<Settings>();
-
             if (!Directory.Exists(settings.ContentFolderName))
                 Directory.CreateDirectory(settings.ContentFolderName);
 
@@ -82,7 +83,6 @@ namespace IpCameraClient.WebFacade
         }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-
             if (env.IsDevelopment())
             {
                 loggerFactory.AddConsole(LogLevel.Information);
@@ -90,7 +90,10 @@ namespace IpCameraClient.WebFacade
             }
             else
             {
-                loggerFactory.AddNLog();
+                Log.Logger = new LoggerConfiguration()
+                    .Enrich.FromLogContext()
+                    .WriteTo.RollingFile(Path.Combine(Directory.GetCurrentDirectory(), "logs", "log-{Date}.txt"))
+                    .CreateLogger();
             }
 
             app.UseMvc(routes => 
