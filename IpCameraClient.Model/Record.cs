@@ -1,11 +1,12 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using LiteDB;
 
 namespace IpCameraClient.Model
 {
     public class Record
     {
-        public int RecordId { get; set; }
+        public int Id { get; set; }
 
         public DateTime DateTime { get; set; }
 

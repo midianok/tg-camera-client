@@ -69,9 +69,8 @@ namespace IpCameraClient.WebFacade.Controllers
             var cameraId = int.Parse(update.Message.Text.Split().Last());
             var camera = _cameras.GetById(cameraId);
             var record = _getRecordService.GetVideo(camera);
-
+            
             _records.Add(record);
-            _records.SaveChanges();
 
             _recordSaverService.WriteData($"{_settings.ContentFolderName}/{record.ContentName}", record.Content);
 
@@ -88,7 +87,6 @@ namespace IpCameraClient.WebFacade.Controllers
             var record = _getRecordService.GetVideo(camera);
 
             _records.Add(record);
-            _records.SaveChanges();
 
             _recordSaverService.WriteData($"{_settings.ContentFolderName}/{record.ContentName}", record.Content);
 
@@ -105,8 +103,8 @@ namespace IpCameraClient.WebFacade.Controllers
             foreach (var camera in _cameras.GetAll())
                 cameraListKm.Keyboard.Add(new List<TelegramKeyboardButton>
                 {
-                    new TelegramKeyboardButton { Text = $"{Emoji.Photo} {camera.Model} {camera.CameraId}" },
-                    new TelegramKeyboardButton { Text = $"{Emoji.Gif} {camera.Model} {camera.CameraId}" },
+                    new TelegramKeyboardButton { Text = $"{Emoji.Photo} {camera.Model} {camera.Id}" },
+                    new TelegramKeyboardButton { Text = $"{Emoji.Gif} {camera.Model} {camera.Id}" },
                 });
 
             return Bot.Api.SendTextMessageAsync(update.Message.Chat.Id, Emoji.Camera, replyMarkup: cameraListKm);

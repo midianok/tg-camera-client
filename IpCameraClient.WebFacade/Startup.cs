@@ -1,11 +1,9 @@
-﻿using IpCameraClient.Db;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Microsoft.EntityFrameworkCore;
 using IpCameraClient.Model;
 using System.IO;
 using System.Linq;
@@ -13,6 +11,7 @@ using IpCameraClient.Infrastructure.Abstractions;
 using IpCameraClient.Infrastructure.Repository;
 using IpCameraClient.Infrastructure.Services;
 using IpCameraClient.Model.Telegram;
+using LiteDB;
 using Serilog;
 
 namespace IpCameraClient.WebFacade
@@ -31,7 +30,6 @@ namespace IpCameraClient.WebFacade
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables(); ;
             Configuration = builder.Build();
-
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -44,42 +42,47 @@ namespace IpCameraClient.WebFacade
             if (!Directory.Exists(settings.ContentFolderName))
                 Directory.CreateDirectory(settings.ContentFolderName);
 
-            services.AddDbContext<SQLiteContext>(options =>
-            {
-                options.UseSqlite($"Filename={DbName}");
-                
-            });
-            var optionsBuilder = new DbContextOptionsBuilder<SQLiteContext>();
-            var context = new SQLiteContext(optionsBuilder.Options);
-            context.Seed(x =>
-            {
-                x.Cameras.Add(new Camera
-                {
-                    Auth = settings.DefaultCameraAuth,
-                    CameraUrl = settings.DefaultCameraUrl,
-                    Model = settings.DefaultCameraModelName
-                });
-
-                var accessedTelegramUserNames = settings.TelegramUsersAccess
-                    .Split(';')
-                    .Select(z => new TelegramUser {TelegramUserName = z });
-
-                x.TelegramUser.AddRange(accessedTelegramUserNames);
-
-            });
-            
             services
                 .AddMvc()
                 .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
-            Bot.Init(settings.TelegramBotToken);
-            Bot.Api.SetWebhookAsync(settings.HostUrl + "/TelegramBot/Message").Wait();
 
-            services.AddScoped<DbContext, SQLiteContext>();
-            services.AddScoped<IRepository<Camera>, EfRepository<Camera>>();
-            services.AddScoped<IRepository<Record>, EfRepository<Record>>();
-            services.AddScoped<IRepository<TelegramUser>, EfRepository<TelegramUser>>();
+            Bot.Init(settings.TelegramBotToken);
+            if (settings.Ngrok)
+            {
+                var ngrockUrl = Ngrok.GetTunnelUrl();
+                Bot.Api.SetWebhookAsync(ngrockUrl + "/TelegramBot/Message").Wait();
+            }
+            else
+                Bot.Api.SetWebhookAsync(settings.HostUrl + "/TelegramBot/Message").Wait();
+
+            services.AddScoped<IRepository<Camera>, LiteDbRepository<Camera>>();
+            services.AddScoped<IRepository<Record>, LiteDbRepository<Record>>();
+            services.AddScoped<IRepository<TelegramUser>, LiteDbRepository<TelegramUser>>();
             services.AddScoped<IRecordSaverService, FileSystemRecordSaverService>();
+            
+            BsonMapper.Global.Entity<Camera>().Id(a => a.Id);
+            BsonMapper.Global.Entity<TelegramUser>().Id(a => a.Id);
+            BsonMapper.Global.Entity<Record>().Id(a => a.Id);
+            
+            //seed
+            if (!File.Exists($"{Directory.GetCurrentDirectory()}\\CameraClient.db"))
+            {
+                new LiteDbRepository<Camera>()
+                    .Add(new Camera
+                    {
+                        Auth = settings.DefaultCameraAuth,
+                        CameraUrl = settings.DefaultCameraUrl,
+                        Model = settings.DefaultCameraModelName
+                    });
+                var accessedTelegramUserNames = settings.TelegramUsersAccess
+                    .Split(';')
+                    .Select(z => new TelegramUser {TelegramUserName = z });
+                
+                new LiteDbRepository<TelegramUser>()
+                    .AddRange(accessedTelegramUserNames);
+            }
+
         }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
@@ -114,5 +117,6 @@ namespace IpCameraClient.WebFacade
         public string DefaultCameraUrl { get; set; }
         public string DefaultCameraAuth { get; set; }
         public string ContentFolderName { get; set; }
+        public bool Ngrok { get; set; }
     }
 }

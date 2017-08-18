@@ -31,13 +31,12 @@ namespace IpCameraClient.WebFacade.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPhoto(int id)
+        public IActionResult GetPhoto(int id)
         {
             var camera = _cameras.GetById(id);
             var record = _getRecordService.GetPhoto(camera);
 
             _records.Add(record);
-            _records.SaveChanges();
             _recordSaverService.WriteData($"{_settings.ContentFolderName}/{record.ContentName}", record.Content);
 
             return Ok();
