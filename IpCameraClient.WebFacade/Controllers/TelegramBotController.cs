@@ -57,7 +57,7 @@ namespace IpCameraClient.WebFacade.Controllers
                     await SendPhotoAsync(update);
                     break;
                 case var btnTxt when btnTxt.Contains(Emoji.Gif):
-                    await SendGifAsync(update);
+                    //await SendGifAsync(update);
                     break;
             }
 
@@ -84,7 +84,7 @@ namespace IpCameraClient.WebFacade.Controllers
         {
             var cameraId = int.Parse(update.Message.Text.Split().Last());
             var camera = _cameras.GetById(cameraId);
-            var record = _getRecordService.GetVideo(camera);
+            var record = _getRecordService.GetPhoto(camera);
 
             _records.Add(record);
 

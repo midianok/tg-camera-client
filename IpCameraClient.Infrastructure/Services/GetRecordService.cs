@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using ImageMagick;
 using IpCameraClient.Infrastructure.Abstractions;
 using IpCameraClient.Model;
 
@@ -27,26 +26,7 @@ namespace IpCameraClient.Infrastructure.Services
 
         public Record GetVideo(Camera camera)
         {
-            byte[] content;
-            using (var images = new MagickImageCollection())
-            {
-                var photos = GetPhotoFromCamera(camera, 25).Result;
-
-                foreach (var photo in photos)
-                    images.Add(new MagickImage(photo));
-
-                images.OptimizePlus();
-                content = images.ToByteArray(MagickFormat.Gif);
-            }
-            
-            return new Record
-            {
-                Camera = camera,
-                ContentName = $"{camera.Model}_{DateTime.Now:ddMMyyyy-H-mm-ss}.gif",
-                ContentType = ContentType.Gif,
-                DateTime = DateTime.Now,
-                Content = content
-            };
+            return null;
         }
         
         private async Task<byte[]> GetPhotoFromCamera(Camera camera)
