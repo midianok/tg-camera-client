@@ -18,8 +18,6 @@ namespace IpCameraClient.WebFacade
 {
     public class Startup
     {
-        private const string DbName = "CameraClient.db";
-
         public IConfigurationRoot Configuration { get; }
 
         public Startup(IHostingEnvironment env)
@@ -28,29 +26,35 @@ namespace IpCameraClient.WebFacade
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables(); ;
+                .AddEnvironmentVariables();
             Configuration = builder.Build();
+            
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.RollingFile(Path.Combine(Directory.GetCurrentDirectory(), "Logs", "log-{Date}.txt"))
+                .CreateLogger();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            Log.Logger.Information("Initialization start ");
+
             services.AddOptions();
             services.Configure<Settings>(Configuration);
             services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
+            services
+                .AddMvc()
+                .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
             var settings = Configuration.Get<Settings>();
             if (!Directory.Exists(settings.ContentFolderName))
                 Directory.CreateDirectory(settings.ContentFolderName);
 
-            services
-                .AddMvc()
-                .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
-
-
             Bot.Init(settings.TelegramBotToken);
             if (settings.Ngrok)
             {
                 var ngrockUrl = Ngrok.GetTunnelUrl();
+                Log.Logger.Information($"Ngrok url: {ngrockUrl}");
                 Bot.Api.SetWebhookAsync(ngrockUrl + "/TelegramBot/Message").Wait();
             }
             else
@@ -63,11 +67,11 @@ namespace IpCameraClient.WebFacade
             
             BsonMapper.Global.Entity<Camera>().Id(a => a.Id);
             BsonMapper.Global.Entity<TelegramUser>().Id(a => a.Id);
-            BsonMapper.Global.Entity<Record>().Id(a => a.Id);
+            BsonMapper.Global.Entity<Record>().Id(a => a.Id).Ignore(x => x.Content);
             
-            //seed
-            if (!File.Exists($"{Directory.GetCurrentDirectory()}\\CameraClient.db"))
+            if (!File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "CameraClient.db")))
             {
+                Log.Logger.Information("Db not exists. Creating db.");
                 new LiteDbRepository<Camera>()
                     .Add(new Camera
                     {
@@ -75,14 +79,17 @@ namespace IpCameraClient.WebFacade
                         CameraUrl = settings.DefaultCameraUrl,
                         Model = settings.DefaultCameraModelName
                     });
+
                 var accessedTelegramUserNames = settings.TelegramUsersAccess
                     .Split(';')
-                    .Select(z => new TelegramUser {TelegramUserName = z });
-                
+                    .Select(userName => new TelegramUser { TelegramUserName = userName });
                 new LiteDbRepository<TelegramUser>()
                     .AddRange(accessedTelegramUserNames);
-            }
 
+                Log.Logger.Information("Db created");
+            }
+            
+            Log.Logger.Information("initialization end");
         }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
@@ -90,13 +97,6 @@ namespace IpCameraClient.WebFacade
             {
                 loggerFactory.AddConsole(LogLevel.Information);
                 loggerFactory.AddDebug();
-            }
-            else
-            {
-                Log.Logger = new LoggerConfiguration()
-                    .Enrich.FromLogContext()
-                    .WriteTo.RollingFile(Path.Combine(Directory.GetCurrentDirectory(), "logs", "log-{Date}.txt"))
-                    .CreateLogger();
             }
 
             app.UseMvc(routes => 

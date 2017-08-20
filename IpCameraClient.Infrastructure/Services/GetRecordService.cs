@@ -11,9 +11,9 @@ namespace IpCameraClient.Infrastructure.Services
 {
     public class GetRecordService : IGetRecordService
     {
-        public Record GetPhoto(Camera camera)
+        public async Task<Record> GetImage(Camera camera)
         {
-            var content = GetPhotoFromCamera(camera).Result;
+            var content = await GetImageFromCamera(camera);
             return new Record
             {
                 Camera = camera,
@@ -24,41 +24,19 @@ namespace IpCameraClient.Infrastructure.Services
             };
         }
 
-        public Record GetVideo(Camera camera)
+        public async Task<Record> GetVideo(Camera camera)
         {
             return null;
         }
         
-        private async Task<byte[]> GetPhotoFromCamera(Camera camera)
+        private async Task<byte[]> GetImageFromCamera(Camera camera)
         {
-            byte[] photo;
-
             using (var httpClient = new HttpClient())
             {
                 var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(camera.Auth));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                photo = await httpClient.GetByteArrayAsync(camera.CameraUrl);
+                return await httpClient.GetByteArrayAsync(camera.CameraUrl);
             };
-
-            return photo;
-        }
-
-        private async Task<List<byte[]>> GetPhotoFromCamera(Camera camera, int imagesCount)
-        {
-            var images = new List<byte[]>();
-
-            using (var httpClient = new HttpClient())
-            {
-                for (var i = 0; i < imagesCount; i++)
-                {
-                    var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(camera.Auth));
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                    var image = await httpClient.GetByteArrayAsync(camera.CameraUrl);
-                    images.Add(image);
-                }
-            };
-
-            return images;
         }
     }
 }

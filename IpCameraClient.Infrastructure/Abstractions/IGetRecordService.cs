@@ -1,10 +1,11 @@
-﻿using IpCameraClient.Model;
+﻿using System.Threading.Tasks;
+using IpCameraClient.Model;
 
 namespace IpCameraClient.Infrastructure.Abstractions
 {
     public interface IGetRecordService
     {
-        Record GetPhoto(Camera camera);
-        Record GetVideo(Camera camera);
+        Task<Record> GetImage(Camera camera);
+        Task<Record> GetVideo(Camera camera);
     }
 }

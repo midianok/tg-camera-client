@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using IpCameraClient.Infrastructure.Abstractions;
 using IpCameraClient.Infrastructure.Services;
 using IpCameraClient.Model.Telegram;
+using Serilog;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -57,7 +58,7 @@ namespace IpCameraClient.WebFacade.Controllers
                     await SendPhotoAsync(update);
                     break;
                 case var btnTxt when btnTxt.Contains(Emoji.Gif):
-                    //await SendGifAsync(update);
+                    await SendGifAsync(update);
                     break;
             }
 
@@ -68,10 +69,14 @@ namespace IpCameraClient.WebFacade.Controllers
         {
             var cameraId = int.Parse(update.Message.Text.Split().Last());
             var camera = _cameras.GetById(cameraId);
-            var record = _getRecordService.GetVideo(camera);
+            var record = await _getRecordService.GetVideo(camera);
+            if (record == null)
+            {
+                Log.Logger.Error("Failed to get video");
+                return;
+            }
             
             _records.Add(record);
-
             _recordSaverService.WriteData($"{_settings.ContentFolderName}/{record.ContentName}", record.Content);
 
             using (var file = new MemoryStream(record.Content))
@@ -84,10 +89,15 @@ namespace IpCameraClient.WebFacade.Controllers
         {
             var cameraId = int.Parse(update.Message.Text.Split().Last());
             var camera = _cameras.GetById(cameraId);
-            var record = _getRecordService.GetPhoto(camera);
-
+            var record = await _getRecordService.GetImage(camera);
+            if (record == null)
+            {
+                Log.Logger.Error("Failed to get image");
+                return;
+            }
+            
+            
             _records.Add(record);
-
             _recordSaverService.WriteData($"{_settings.ContentFolderName}/{record.ContentName}", record.Content);
 
             using (var file = new MemoryStream(record.Content))

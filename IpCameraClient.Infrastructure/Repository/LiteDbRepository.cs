@@ -12,7 +12,7 @@ namespace IpCameraClient.Infrastructure.Repository
         private readonly string _dbPath;
         
         public LiteDbRepository() =>
-            _dbPath = $"{Directory.GetCurrentDirectory()}\\CameraClient.db";
+            _dbPath = Path.Combine(Directory.GetCurrentDirectory(), "CameraClient.db");
         
         
         public IEnumerable<TEntity> GetAll()
