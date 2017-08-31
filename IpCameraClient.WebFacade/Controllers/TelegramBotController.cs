@@ -46,8 +46,8 @@ namespace IpCameraClient.WebFacade.Controllers
         public async Task<IActionResult> Message([FromBody]Update update)
         {
             var accessedUserNames = _users.GetAll().Select(x => x.TelegramUserName);
-            if (!accessedUserNames.Contains(update.Message.Chat.Username) &&
-                update.Message.Type != MessageType.TextMessage) return NotFound();
+            if (!accessedUserNames.Contains(update.Message.Chat.Username) || update.Message.Type != MessageType.TextMessage)
+                return Ok();
 
             switch (update.Message.Text)
             {
@@ -95,7 +95,6 @@ namespace IpCameraClient.WebFacade.Controllers
                 Log.Logger.Error("Failed to get image");
                 return;
             }
-            
             
             _records.Add(record);
             _recordSaverService.WriteData($"{_settings.ContentFolderName}/{record.ContentName}", record.Content);
