@@ -12,6 +12,7 @@ using IpCameraClient.Model.Telegram;
 using Serilog;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.InputFiles;
 
 namespace IpCameraClient.WebFacade.Controllers
 {
@@ -46,7 +47,7 @@ namespace IpCameraClient.WebFacade.Controllers
         public async Task<IActionResult> Message([FromBody]Update update)
         {
             var accessedUserNames = _users.GetAll().Select(x => x.TelegramUserName);
-            if (!accessedUserNames.Contains(update.Message.Chat.Username) || update.Message.Type != MessageType.TextMessage)
+            if (!accessedUserNames.Contains(update.Message.Chat.Username) || update.Message.Type != MessageType.Text)
                 return Ok();
 
             switch (update.Message.Text)
@@ -81,7 +82,7 @@ namespace IpCameraClient.WebFacade.Controllers
 
             using (var file = new MemoryStream(record.Content))
             {
-                await Bot.Api.SendDocumentAsync(update.Message.Chat.Id, new FileToSend(record.ContentName, file));
+                await Bot.Api.SendDocumentAsync(update.Message.Chat.Id, new InputOnlineFile(file, record.ContentName));
             }
         }
 
@@ -101,7 +102,7 @@ namespace IpCameraClient.WebFacade.Controllers
 
             using (var file = new MemoryStream(record.Content))
             {
-                await Bot.Api.SendPhotoAsync(update.Message.Chat.Id, new FileToSend(record.ContentName, file));
+                await Bot.Api.SendPhotoAsync(update.Message.Chat.Id, new InputOnlineFile(file, record.ContentName));
             }
         }
 
