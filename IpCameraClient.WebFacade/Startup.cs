@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using IpCameraClient.Model;
 using System.IO;
 using System.Linq;
-using IpCameraClient.Infrastructure.Abstractions;
-using IpCameraClient.Infrastructure.Repository;
-using IpCameraClient.Infrastructure.Services;
-using IpCameraClient.Model.Telegram;
-using LiteDB;
+using IpCameraClient.Core;
+using IpCameraClient.Core.Infrastructure;
+using MihaZupan;
 using Serilog;
+using Telegram.Bot;
 
 namespace IpCameraClient.WebFacade
 {
@@ -38,60 +38,33 @@ namespace IpCameraClient.WebFacade
         public void ConfigureServices(IServiceCollection services)
         {
             Log.Logger.Information("Initialization start ");
-
+            var settings = Configuration.Get<Settings>();
+            
             services.AddOptions();
             services.Configure<Settings>(Configuration);
             services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
             services
                 .AddMvc()
                 .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
-
-            var settings = Configuration.Get<Settings>();
-            if (!Directory.Exists(settings.ContentFolderName))
-                Directory.CreateDirectory(settings.ContentFolderName);
-
-            Bot.Init(settings.TelegramBotToken);
-            if (settings.Ngrok)
-            {
-                var ngrockUrl = Ngrok.GetTunnelUrl();
-                Log.Logger.Information($"Ngrok url: {ngrockUrl}");
-                Bot.Api.SetWebhookAsync(ngrockUrl + "/TelegramBot/Message").Wait();
-            }
-            else
-                Bot.Api.SetWebhookAsync(settings.HostUrl + "/TelegramBot/Message").Wait();
-
-            services.AddScoped<IRepository<Camera>, LiteDbRepository<Camera>>();
-            services.AddScoped<IRepository<Record>, LiteDbRepository<Record>>();
-            services.AddScoped<IRepository<TelegramUser>, LiteDbRepository<TelegramUser>>();
-            services.AddScoped<IRecordSaverService, FileSystemRecordSaverService>();
             
-            BsonMapper.Global.Entity<Camera>().Id(a => a.Id);
-            BsonMapper.Global.Entity<TelegramUser>().Id(a => a.Id);
-            BsonMapper.Global.Entity<Record>().Id(a => a.Id).Ignore(x => x.Content);
+            services.AddScoped<IGetRecordService, GetRecordService>(_ => new GetRecordService(settings.CameraImageUrl, settings.CameraAuth));
+            services.AddScoped<ITelegramService, TelegramService>();
             
-            if (!File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "CameraClient.db")))
+            services.AddScoped<IList<string>>(_ => settings.TelegramUsersAccess.Split(";").ToList());
+            services.AddScoped(_ =>
             {
-                Log.Logger.Information("Db not exists. Creating db.");
-                new LiteDbRepository<Camera>()
-                    .Add(new Camera
-                    {
-                        Auth = settings.DefaultCameraAuth,
-                        CameraUrl = settings.DefaultCameraUrl,
-                        Model = settings.DefaultCameraModelName
-                    });
-
-                var accessedTelegramUserNames = settings.TelegramUsersAccess
-                    .Split(';')
-                    .Select(userName => new TelegramUser { TelegramUserName = userName });
-                new LiteDbRepository<TelegramUser>()
-                    .AddRange(accessedTelegramUserNames);
-
-                Log.Logger.Information("Db created");
-            }
+                if (string.IsNullOrWhiteSpace(settings.Proxy.Host))
+                {
+                    return new TelegramBotClient(settings.TelegramBotToken);
+                }
+                
+                var proxy = new HttpToSocks5Proxy(settings.Proxy.Host, settings.Proxy.Port, settings.Proxy.User, settings.Proxy.Password);
+                return new TelegramBotClient(settings.TelegramBotToken, proxy);
+            });
             
             Log.Logger.Information("initialization end");
         }
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -105,18 +78,20 @@ namespace IpCameraClient.WebFacade
                     name: "DefaultRoute",
                     template: "{controller}/{action}/{id?}");
             });
+            
+            var client = serviceProvider.GetService<TelegramBotClient>();
+            
+            var settings = Configuration.Get<Settings>();
+            if (settings.Ngrok)
+            {
+                var ngrokUrl = Ngrok.GetTunnelUrl();
+                Log.Logger.Information($"Ngrok url: {ngrokUrl}");
+                client.SetWebhookAsync(ngrokUrl + "/TelegramBot/Message").Wait();
+            }
+            else
+            {
+                client.SetWebhookAsync(settings.WebHookUrl + "/TelegramBot/Message").Wait();
+            }
         }
-    }
-
-    public class Settings
-    {
-        public string TelegramBotToken { get; set; }
-        public string TelegramUsersAccess { get; set; }
-        public string HostUrl { get; set; }
-        public string DefaultCameraModelName { get; set; }
-        public string DefaultCameraUrl { get; set; }
-        public string DefaultCameraAuth { get; set; }
-        public string ContentFolderName { get; set; }
-        public bool Ngrok { get; set; }
     }
 }

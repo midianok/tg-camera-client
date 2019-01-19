@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace IpCameraClient.Model.Telegram
+namespace IpCameraClient.Core
 {
     public static class Emoji
     {
