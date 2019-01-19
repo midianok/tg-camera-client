@@ -27,14 +27,4 @@
         <HintPath>..\..\..\.nuget\packages\microsoft.extensions.configuration\2.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
       </Reference>
     </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="appsettings.Development.json">
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
-      <Content Include="appsettings.json">
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
-    </ItemGroup>
-
 </Project>

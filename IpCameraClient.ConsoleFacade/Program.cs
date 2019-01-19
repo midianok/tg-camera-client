@@ -37,6 +37,7 @@ namespace IpCameraClient.ConsoleFacade
 
             telegramClient.OnMessage += (sender, update) => telegramService.ProcessMessageAsync(update.Message);
             telegramClient.StartReceiving();
+            Console.WriteLine("Started");
             
             Console.ReadLine();
             return 1;
