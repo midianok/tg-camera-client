@@ -11,8 +11,8 @@ namespace IpCameraClient.WebFacade
         {
             using (var client = new HttpClient())
             {
-                var responce = client.GetStringAsync(ApiTunnelsUrl).Result;
-                var tunnel = JsonConvert.DeserializeObject<Tunnel>(responce);
+                var response = client.GetStringAsync(ApiTunnelsUrl).Result;
+                var tunnel = JsonConvert.DeserializeObject<Tunnel>(response);
                 return tunnel.PublicUrl;
             }
         }

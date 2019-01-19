@@ -26,12 +26,14 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0-msbuild3-final" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IpCameraClient.Infrastructure\IpCameraClient.Infrastructure.csproj" />
-    <ProjectReference Include="..\IpCameraClient.Model\IpCameraClient.Model.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <None Update="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Logs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IpCameraClient.Core\IpCameraClient.Core.csproj" />
   </ItemGroup>
 </Project>

@@ -264,6 +264,8 @@ __pycache__/
 appsettings.Development.json
 Content/
 /IpCameraClient.WebFacade/Content
+log
+logs
 
 #git update-index --assume-unchanged FILE_NAME
 #git update-index --no-assume-unchanged FILE_NAME

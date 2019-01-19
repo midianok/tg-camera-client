@@ -5,9 +5,9 @@ VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpCameraClient.WebFacade", "IpCameraClient.WebFacade\IpCameraClient.WebFacade.csproj", "{65D3592E-CCB1-4A5C-A919-1E4A0DF6D2C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpCameraClient.Model", "IpCameraClient.Model\IpCameraClient.Model.csproj", "{CDC77080-1B76-48A0-891B-B97A1E3CDDCA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpCameraClient.Core", "IpCameraClient.Core\IpCameraClient.Core.csproj", "{CA030D18-46FF-4425-8F84-41397A9C5BD2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpCameraClient.Infrastructure", "IpCameraClient.Infrastructure\IpCameraClient.Infrastructure.csproj", "{CA030D18-46FF-4425-8F84-41397A9C5BD2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpCameraClient.ConsoleFacade", "IpCameraClient.ConsoleFacade\IpCameraClient.ConsoleFacade.csproj", "{D5B1E3FF-5DE2-4FD4-BE60-C6C901B3E1F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,18 +31,6 @@ Global
 		{65D3592E-CCB1-4A5C-A919-1E4A0DF6D2C6}.Release|x64.Build.0 = Release|Any CPU
 		{65D3592E-CCB1-4A5C-A919-1E4A0DF6D2C6}.Release|x86.ActiveCfg = Release|Any CPU
 		{65D3592E-CCB1-4A5C-A919-1E4A0DF6D2C6}.Release|x86.Build.0 = Release|Any CPU
-		{CDC77080-1B76-48A0-891B-B97A1E3CDDCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CDC77080-1B76-48A0-891B-B97A1E3CDDCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CDC77080-1B76-48A0-891B-B97A1E3CDDCA}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{CDC77080-1B76-48A0-891B-B97A1E3CDDCA}.Debug|x64.Build.0 = Debug|Any CPU
-		{CDC77080-1B76-48A0-891B-B97A1E3CDDCA}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{CDC77080-1B76-48A0-891B-B97A1E3CDDCA}.Debug|x86.Build.0 = Debug|Any CPU
-		{CDC77080-1B76-48A0-891B-B97A1E3CDDCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CDC77080-1B76-48A0-891B-B97A1E3CDDCA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CDC77080-1B76-48A0-891B-B97A1E3CDDCA}.Release|x64.ActiveCfg = Release|Any CPU
-		{CDC77080-1B76-48A0-891B-B97A1E3CDDCA}.Release|x64.Build.0 = Release|Any CPU
-		{CDC77080-1B76-48A0-891B-B97A1E3CDDCA}.Release|x86.ActiveCfg = Release|Any CPU
-		{CDC77080-1B76-48A0-891B-B97A1E3CDDCA}.Release|x86.Build.0 = Release|Any CPU
 		{CA030D18-46FF-4425-8F84-41397A9C5BD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CA030D18-46FF-4425-8F84-41397A9C5BD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA030D18-46FF-4425-8F84-41397A9C5BD2}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -55,6 +43,18 @@ Global
 		{CA030D18-46FF-4425-8F84-41397A9C5BD2}.Release|x64.Build.0 = Release|Any CPU
 		{CA030D18-46FF-4425-8F84-41397A9C5BD2}.Release|x86.ActiveCfg = Release|Any CPU
 		{CA030D18-46FF-4425-8F84-41397A9C5BD2}.Release|x86.Build.0 = Release|Any CPU
+		{D5B1E3FF-5DE2-4FD4-BE60-C6C901B3E1F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5B1E3FF-5DE2-4FD4-BE60-C6C901B3E1F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5B1E3FF-5DE2-4FD4-BE60-C6C901B3E1F3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D5B1E3FF-5DE2-4FD4-BE60-C6C901B3E1F3}.Debug|x64.Build.0 = Debug|Any CPU
+		{D5B1E3FF-5DE2-4FD4-BE60-C6C901B3E1F3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D5B1E3FF-5DE2-4FD4-BE60-C6C901B3E1F3}.Debug|x86.Build.0 = Debug|Any CPU
+		{D5B1E3FF-5DE2-4FD4-BE60-C6C901B3E1F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5B1E3FF-5DE2-4FD4-BE60-C6C901B3E1F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5B1E3FF-5DE2-4FD4-BE60-C6C901B3E1F3}.Release|x64.ActiveCfg = Release|Any CPU
+		{D5B1E3FF-5DE2-4FD4-BE60-C6C901B3E1F3}.Release|x64.Build.0 = Release|Any CPU
+		{D5B1E3FF-5DE2-4FD4-BE60-C6C901B3E1F3}.Release|x86.ActiveCfg = Release|Any CPU
+		{D5B1E3FF-5DE2-4FD4-BE60-C6C901B3E1F3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
