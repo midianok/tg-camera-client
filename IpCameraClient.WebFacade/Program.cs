@@ -14,7 +14,6 @@ namespace IpCameraClient.WebFacade
                 .UseStartup<Startup>()
                 .Build();
             host.Run();
-            Bot.Api.DeleteWebhookAsync().Wait();
         }
     }
 }

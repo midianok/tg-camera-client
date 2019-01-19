@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RootNamespace>IpCameraClient.Infrastructure</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="LiteDB" Version="3.1.4" />
-    <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
+    <PackageReference Include="HttpToSocks5Proxy" Version="1.1.2" />
     <PackageReference Include="Telegram.Bot" Version="14.10.0" />
   </ItemGroup>
 </Project>
