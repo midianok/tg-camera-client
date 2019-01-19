@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using IpCameraClient.Core;
 using IpCameraClient.Core.Infrastructure;
@@ -39,7 +40,7 @@ namespace IpCameraClient.ConsoleFacade
             telegramClient.StartReceiving();
             Console.WriteLine("Started");
             
-            Console.ReadLine();
+            Thread.Sleep(Timeout.Infinite);
             return 1;
 
         }
